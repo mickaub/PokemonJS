@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <!--
 Basics of Pokemon game
-
+wakling grid creation, Start state/button, audio states, movement state, triggering encounters, fadein state, battlestate,
+battlemenu state, taketurn state,
+victory/defeat conditions, fadein/out state, final battle/win conditions.
 
 CS50 sections
 Start State, FadeIn state, dialogue state, playState, gird aligned movment, dialogue revisited,level,
@@ -11,8 +13,7 @@ battlestate, battlemenu state, taketurn state
 -->
 <html lang="en">
 <head>
-<title>
-</title>
+<title>PokemonJS</title>
 <meta charset="UFT-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 </head>
@@ -21,10 +22,46 @@ battlestate, battlemenu state, taketurn state
 <body>
 <div id="TestDisplay">
 </div>
+<div id="grid1"></div>
+<audio id="audioB" src="battleV3.mp3" loop="true"></audio>
+<audio id="audioW" src="walkingV3.mp3" loop="true"></audio>
+<button id="playButton" onclick="play(1,2)";>Play B</button>
+<button id="playButton" onclick="play(2,2)";>Stop B</button>
+<button id="playButton" onclick="play(1,1)";>Play W</button>
+<button id="playButton" onclick="play(2,1)";>Stop W</button>
+<!--<audio controls> 
+<source src="battleV3.mp3" type="audio/mp3">
+Audio not supported.
+</audio>-->
 </body>
 <script>
+let gridL1 = [1,1,1,1,1,1,1,1];
+let gridL2 = [1,0,0,0,0,0,0,1];
+let gridL3 = gridL2;
+let gridL4 = gridL2;
+let gridL5 = gridL2;
+let gridL6 = gridL2;
+let gridL7 = gridL2;
+let gridL8 = [1,1,1,1,1,1,1,1];
+document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3; //work up to 8
 let text = new String;
 text = "hello" + "<br>" + "world";
 document.getElementById("TestDisplay").innerHTML = text;
+function play(state,source){    
+    let audio;
+    if(source==1){
+        audio = document.getElementById("audioW");
+    }
+    if(source==2){
+        audio = document.getElementById("audioB");
+    }    
+    if(state==1){
+        audio.play();
+    }
+    if(state==2){
+        audio.pause();
+        audio.currentTime = 0;
+    }
+}
 </script>
 </html>
