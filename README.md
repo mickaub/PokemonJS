@@ -10,3 +10,10 @@ Began adding grid for movement.
 
 TO DO: Finish working on grid.
 Add final win conditions.
+
+27 Jun
+Worked on Grid, both U/D and L/R movement works correctly.
+
+TO DO: Plan final win conditions
+Plan and create battle scene.
+Formulate encounter rate.

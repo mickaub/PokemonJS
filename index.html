@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
 Basics of Pokemon game
-wakling grid creation, Start state/button, audio states, movement state, triggering encounters, fadein state, battlestate,
+walking grid creation, Start state/button, audio states, movement state, triggering encounters, fadein state, battlestate,
 battlemenu state, taketurn state,
 victory/defeat conditions, fadein/out state, final battle/win conditions.
 
@@ -9,6 +9,10 @@ CS50 sections
 Start State, FadeIn state, dialogue state, playState, gird aligned movment, dialogue revisited,level,
 triggering encounters, Panel/Textbox, Selection, Menu, Party and Pokemon, battlesprite, shaders,
 battlestate, battlemenu state, taketurn state
+
+Left: triggering encounters, fadein state,
+battlemenu state, taketurn state,
+victory/defeat conditions, fadein/out state, final battle/win conditions.
 
 -->
 <html lang="en">
@@ -25,10 +29,16 @@ battlestate, battlemenu state, taketurn state
 <div id="grid1"></div>
 <audio id="audioB" src="battleV3.mp3" loop="true"></audio>
 <audio id="audioW" src="walkingV3.mp3" loop="true"></audio>
-<button id="playButton" onclick="play(1,2)";>Play B</button>
-<button id="playButton" onclick="play(2,2)";>Stop B</button>
-<button id="playButton" onclick="play(1,1)";>Play W</button>
-<button id="playButton" onclick="play(2,1)";>Stop W</button>
+<button id="playButton" onclick="Play(1,2)";>Play B</button>
+<button id="playButton" onclick="Play(2,2)";>Stop B</button>
+<button id="playButton" onclick="Play(1,1)";>Play W</button>
+<button id="playButton" onclick="Play(2,1)";>Stop W</button>
+<div id="startButton"></div>
+<button id="leftDir" onclick="Move(-1)">Move L</button>
+<button id="downDir" onclick="Move(-8)">Move D</button>
+<button id="upDir" onclick="Move(8)">Move U</button>
+<button id="rightDir" onclick="Move(1)">Move R</button>
+<button id="resetButton" onclick="Reset()"></button>
 <!--<audio controls> 
 <source src="battleV3.mp3" type="audio/mp3">
 Audio not supported.
@@ -37,17 +47,26 @@ Audio not supported.
 <script>
 let gridL1 = [1,1,1,1,1,1,1,1];
 let gridL2 = [1,0,0,0,0,0,0,1];
-let gridL3 = gridL2;
-let gridL4 = gridL2;
-let gridL5 = gridL2;
-let gridL6 = gridL2;
-let gridL7 = gridL2;
+let gridL3 = [1,0,0,0,0,0,0,1]
+let gridL4 = [1,0,0,0,0,0,0,1]
+let gridL5 = [1,0,0,0,0,0,0,1]
+let gridL6 = [1,0,0,0,0,0,0,1]
+let gridL7 = [1,0,0,0,0,0,0,1]
 let gridL8 = [1,1,1,1,1,1,1,1];
-document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3; //work up to 8
+let startState = false;
+let movementState = false;
+let battleState = false;
+let playerPos = [1,1]; //up/down then left/right
+
+gridL2 = [1,2,0,0,0,0,0,1]; //player init
+
+document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
 let text = new String;
 text = "hello" + "<br>" + "world";
 document.getElementById("TestDisplay").innerHTML = text;
-function play(state,source){    
+document.getElementById("startButton").innerHTML = "<button onclick=\"Start()\">Start</button>";
+
+function Play(state,source){    
     let audio;
     if(source==1){
         audio = document.getElementById("audioW");
@@ -62,6 +81,136 @@ function play(state,source){
         audio.pause();
         audio.currentTime = 0;
     }
+}
+function Start(){
+    document.getElementById("startButton").innerHTML = "";
+    startState = true;
+    console.log("StartState: ",startState);
+    Play(1,1)
+    movementState = true;
+}
+function Move(direction){    
+    let ud = playerPos[0];
+    let lr = playerPos[1];
+    if(direction==-8){
+        if(ud==6){
+            return;
+        }
+        if(ud==1){
+            gridL2[lr]=0;
+            gridL3[lr]=2;   
+        }
+        if(ud==2){
+            gridL3[lr]=0;
+            gridL4[lr]=2;         
+        }
+        if(ud==3){
+            gridL4[lr]=0;
+            gridL5[lr]=2;         
+        }
+        if(ud==4){
+            gridL5[lr]=0;
+            gridL6[lr]=2;                  
+        }
+        if(ud==5){
+            gridL6[lr]=0;
+            gridL7[lr]=2;               
+        }           
+        playerPos[0] += 1;
+    }
+    if(direction==8){
+        if(ud==1){
+            return;
+        }       
+        if(ud==2){
+            gridL2[lr]=2;
+            gridL3[lr]=0;         
+        }
+        if(ud==3){
+            gridL3[lr]=2;
+            gridL4[lr]=0;         
+        }
+        if(ud==4){
+            gridL4[lr]=2;
+            gridL5[lr]=0;         
+        }
+        if(ud==5){
+            gridL5[lr]=2;
+            gridL6[lr]=0;                  
+        }         
+        if(ud==6){
+            gridL6[lr]=2;
+            gridL7[lr]=0;               
+        }          
+        playerPos[0] -= 1;
+    }
+    if(direction==1){
+        let newlr = lr + 1;
+        if(lr==6){
+            return;
+        }  
+        if(ud==1){
+            gridL2[lr]=0;
+            gridL2[newlr]=2;         
+        }   
+        if(ud==2){
+            gridL3[lr]=0;
+            gridL3[newlr]=2;         
+        }    
+        if(ud==3){
+            gridL4[lr]=0;
+            gridL4[newlr]=2;         
+        }    
+        if(ud==4){
+            gridL5[lr]=0;
+            gridL5[newlr]=2;         
+        }    
+        if(ud==5){
+            gridL6[lr]=0;
+            gridL6[newlr]=2;         
+        }    
+        if(ud==6){
+            gridL7[lr]=0;
+            gridL7[newlr]=2;         
+        }              
+        playerPos[1] += 1;
+    }
+    if(direction==-1){
+        let newlr = lr - 1;
+        if(lr==1){
+            return;
+        }  
+        if(ud==1){
+            gridL2[lr]=0;
+            gridL2[newlr]=2;         
+        }   
+        if(ud==2){
+            gridL3[lr]=0;
+            gridL3[newlr]=2;         
+        }    
+        if(ud==3){
+            gridL4[lr]=0;
+            gridL4[newlr]=2;         
+        }    
+        if(ud==4){
+            gridL5[lr]=0;
+            gridL5[newlr]=2;         
+        }    
+        if(ud==5){
+            gridL6[lr]=0;
+            gridL6[newlr]=2;         
+        }    
+        if(ud==6){
+            gridL7[lr]=0;
+            gridL7[newlr]=2;         
+        }              
+        playerPos[1] -= 1;
+    }
+    document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
+    console.log(playerPos);
+}
+function Reset(){
+    location.reload();
 }
 </script>
 </html>
