@@ -10,9 +10,11 @@ Start State, FadeIn state, dialogue state, playState, gird aligned movment, dial
 triggering encounters, Panel/Textbox, Selection, Menu, Party and Pokemon, battlesprite, shaders,
 battlestate, battlemenu state, taketurn state
 
-Left: triggering encounters, fadein state,
-battlemenu state, taketurn state,
+Left: fadein state,
+taketurn state,
 victory/defeat conditions, fadein/out state, final battle/win conditions.
+
+Win condition: Fight trainer and win.
 
 -->
 <html lang="en">
@@ -24,9 +26,9 @@ victory/defeat conditions, fadein/out state, final battle/win conditions.
 <style>
 </style>
 <body>
-<div id="TestDisplay">
-</div>
+<h2>PokemonJS Game</h2>
 <div id="grid1"></div>
+<br>
 <audio id="audioB" src="battleV3.mp3" loop="true"></audio>
 <audio id="audioW" src="walkingV3.mp3" loop="true"></audio>
 <button id="playButton" onclick="Play(1,2)";>Play B</button>
@@ -38,7 +40,16 @@ victory/defeat conditions, fadein/out state, final battle/win conditions.
 <button id="downDir" onclick="Move(-8)">Move D</button>
 <button id="upDir" onclick="Move(8)">Move U</button>
 <button id="rightDir" onclick="Move(1)">Move R</button>
-<button id="resetButton" onclick="Reset()"></button>
+<button id="resetButton" onclick="Reset()">Reset</button>
+<br>
+<button id="fightTrainer" onclick="FightTrainer()">Fight Trainer</button>
+<br>
+<div id="battleScreen">
+    <div id="enemyHealth">&nbsp;</div>
+    <div id="playerHealth">&nbsp;</div>
+    <button id="Fight" onclick="BattleEnd()">Fight</button><!--tempFunction-->
+    <button id="Run" onclick="BattleEnd()">Run</button><!--tempFunction-->
+</div>
 <!--<audio controls> 
 <source src="battleV3.mp3" type="audio/mp3">
 Audio not supported.
@@ -57,13 +68,19 @@ let startState = false;
 let movementState = false;
 let battleState = false;
 let playerPos = [1,1]; //up/down then left/right
+let trainerPos = [4,6];
+let nearTrainer = false;
+let encounterSteps = -1;
+let enemyHealth = 5;
+let playerHealth = 10;
 
-gridL2 = [1,2,0,0,0,0,0,1]; //player init
+gridL2[1] = 2; //player init
+gridL5[6] = 3;
+
+encounterSteps = Math.floor(Math.random()*5) + 1;
+console.log(encounterSteps);
 
 document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
-let text = new String;
-text = "hello" + "<br>" + "world";
-document.getElementById("TestDisplay").innerHTML = text;
 document.getElementById("startButton").innerHTML = "<button onclick=\"Start()\">Start</button>";
 
 function Play(state,source){    
@@ -89,11 +106,26 @@ function Start(){
     Play(1,1)
     movementState = true;
 }
+movementState = true;//temp
+
 function Move(direction){    
+
+    if(movementState==false){
+        return;
+    }
     let ud = playerPos[0];
     let lr = playerPos[1];
+
+    nearTrainer = false;
+    console.log(nearTrainer);//temp
+
     if(direction==-8){
         if(ud==6){
+            return;
+        }
+        if(ud==3&&lr==6){
+            nearTrainer = true;
+            console.log(nearTrainer);//temp
             return;
         }
         if(ud==1){
@@ -121,7 +153,12 @@ function Move(direction){
     if(direction==8){
         if(ud==1){
             return;
-        }       
+        }    
+        if(ud==5&&lr==6){
+            nearTrainer = true;
+            console.log(nearTrainer);//temp
+            return;
+        }   
         if(ud==2){
             gridL2[lr]=2;
             gridL3[lr]=0;         
@@ -149,6 +186,11 @@ function Move(direction){
         if(lr==6){
             return;
         }  
+        if(ud==4&&lr==5){
+            nearTrainer = true;
+            console.log(nearTrainer);//temp
+            return;
+        }
         if(ud==1){
             gridL2[lr]=0;
             gridL2[newlr]=2;         
@@ -208,6 +250,56 @@ function Move(direction){
     }
     document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
     console.log(playerPos);
+
+    if(playerPos[0]==3||playerPos[0]==5){
+        if(playerPos[1]==6){
+            console.log("close");
+            nearTrainer = true;
+            console.log(nearTrainer);//temp
+        }
+    }
+    if(playerPos[0]==4&&playerPos[1]==5){
+        console.log("close");
+        nearTrainer = true;
+        console.log(nearTrainer);//temp
+    }
+
+    encounterSteps -= 1;
+    if(encounterSteps==0){
+        movementState = false;
+        battleState = true;
+        BattleStart();
+    }
+}
+
+function BattleStart(){
+    document.getElementById("enemyHealth").innerHTML = enemyHealth;
+    document.getElementById("playerHealth").innerHTML = playerHealth;
+}
+
+function BattleAction(Action){
+    if(Action==0){
+        //fight
+    }
+    if(Action==1){
+        //chance to run
+    }
+}
+
+function BattleEnd(){
+    document.getElementById("enemyHealth").innerHTML = "&nbsp";
+    document.getElementById("playerHealth").innerHTML = "&nbsp";
+    movementState = true;
+    battleState = false;
+    encounterSteps = Math.floor(Math.random()*5) + 1;
+    console.log(encounterSteps);
+}
+function FightTrainer(){
+    if(nearTrainer==true){
+        console.log("fighting");
+        enemyHealth = 15;
+        BattleStart();
+    }
 }
 function Reset(){
     location.reload();

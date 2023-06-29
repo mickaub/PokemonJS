@@ -17,3 +17,13 @@ Worked on Grid, both U/D and L/R movement works correctly.
 TO DO: Plan final win conditions
 Plan and create battle scene.
 Formulate encounter rate.
+
+29 Jun
+Planned victory condition to be defeating trainer.
+Created battle screen with two health amounts and two action options.
+Created encounter counter and battle activation.
+Need to be positioned next to trainer to activate final battle.
+
+TO DO: Work out battle results and turns.
+Continue working on battle scene.
+Add experience bar and add levelling up.
