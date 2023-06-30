@@ -47,8 +47,11 @@ Win condition: Fight trainer and win.
 <div id="battleScreen">
     <div id="enemyHealth">&nbsp;</div>
     <div id="playerHealth">&nbsp;</div>
-    <button id="Fight" onclick="BattleEnd()">Fight</button><!--tempFunction-->
-    <button id="Run" onclick="BattleEnd()">Run</button><!--tempFunction-->
+    <br>    
+    <button id="Fight" onclick="BattleAction(0)">Fight</button><!--tempFunction-->
+    <button id="Heal" onclick="BattleAction(1)">Heal</button><!--tempFunction-->
+    <div id="experience">EXP: 0</div>
+    <div id="level">LEVEL: 1</div>
 </div>
 <!--<audio controls> 
 <source src="battleV3.mp3" type="audio/mp3">
@@ -72,7 +75,13 @@ let trainerPos = [4,6];
 let nearTrainer = false;
 let encounterSteps = -1;
 let enemyHealth = 5;
+let fullHealth = 10;
 let playerHealth = 10;
+let experience = 0;
+let level = 1;
+let playerAttack = 3;
+let enemyAttack = 3;
+let enemyTurn = false;
 
 gridL2[1] = 2; //player init
 gridL5[6] = 3;
@@ -268,25 +277,65 @@ function Move(direction){
     if(encounterSteps==0){
         movementState = false;
         battleState = true;
-        BattleStart();
+        BattleStart(0);
     }
 }
-
-function BattleStart(){
-    document.getElementById("enemyHealth").innerHTML = enemyHealth;
-    document.getElementById("playerHealth").innerHTML = playerHealth;
+/*
+battle order:
+battleStart
+battleAction (turns of both players)
+battleEnd
+*/
+function BattleStart(Trainer){
+    enemyHealth = 5;
+    if(Trainer==1){
+        enemyHealth = 15;
+        enemyAttack = 8;
+    }
+    document.getElementById("enemyHealth").innerHTML = "Enemy: " + enemyHealth + "HP";
+    document.getElementById("playerHealth").innerHTML = "Player: " + playerHealth + "HP";
 }
 
 function BattleAction(Action){
-    if(Action==0){
-        //fight
+    if(Action==0){//fight
+        enemyHealth -= playerAttack;
+        if(enemyHealth <= 0){
+            BattleEnd(1);
+            return;
+        }        
     }
-    if(Action==1){
-        //chance to run
+    if(Action==1){//heal   
+        playerHealth += 8;
+        if(playerHealth>fullHealth){
+            playerHealth = fullHealth;
+        }        
     }
+    setTimeout(//set enemy turn and wait
+        function(){
+            playerHealth -= enemyAttack
+            if(playerHealth<=0){
+                BattleEnd(0);
+            }
+            else{
+                document.getElementById("playerHealth").innerHTML = "&nbsp";
+            }
+        }        
+        ,1000);
 }
 
-function BattleEnd(){
+function BattleEnd(Action){
+    if(Action==0){
+        playerHealth = fullHealth;
+    }
+    if(Action==1){//win
+        experience += 50;        
+        if(experience==100){
+            LevelUp();
+        }
+        else{
+            document.getElementById("experience").innerHTML = "EXP: " + experience;
+        }
+    }
     document.getElementById("enemyHealth").innerHTML = "&nbsp";
     document.getElementById("playerHealth").innerHTML = "&nbsp";
     movementState = true;
@@ -294,11 +343,22 @@ function BattleEnd(){
     encounterSteps = Math.floor(Math.random()*5) + 1;
     console.log(encounterSteps);
 }
+
+function LevelUp(){
+    level += 1;
+    experience -= 100;
+    playerAttack += 3;
+    fullHealth += 3;
+    playerHealth = fullHealth;
+
+    document.getElementById("level").innerHTML = "LEVEL: " + level;
+    document.getElementById("experience").innerHTML = "EXP: " + experience;
+}
+
 function FightTrainer(){
     if(nearTrainer==true){
-        console.log("fighting");
-        enemyHealth = 15;
-        BattleStart();
+        console.log("fighting");       
+        BattleStart(1);
     }
 }
 function Reset(){

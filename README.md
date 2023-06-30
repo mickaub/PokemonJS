@@ -27,3 +27,13 @@ Need to be positioned next to trainer to activate final battle.
 TO DO: Work out battle results and turns.
 Continue working on battle scene.
 Add experience bar and add levelling up.
+
+30 Jun
+Added Experience and Level divs, added experience and level growth.
+Added attack and health values, which grow as level increases.
+Reworked battle functions to be more logical.
+
+TO DO:
+Set enemy turn on and off.
+Continue working on battle functions.
+Add fightTrainer on and off variable with battleend fighting trainer allowing for Victory on win.
