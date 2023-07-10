@@ -11,8 +11,8 @@ triggering encounters, Panel/Textbox, Selection, Menu, Party and Pokemon, battle
 battlestate, battlemenu state, taketurn state
 
 Left: fadein state,
-taketurn state,
-victory/defeat conditions, fadein/out state, final battle/win conditions.
+taketurn state
+fadein/out state
 
 Win condition: Fight trainer and win.
 
@@ -53,6 +53,7 @@ Win condition: Fight trainer and win.
     <div id="experience">EXP: 0</div>
     <div id="level">LEVEL: 1</div>
 </div>
+<div id="text-box"></div>
 <!--<audio controls> 
 <source src="battleV3.mp3" type="audio/mp3">
 Audio not supported.
@@ -82,6 +83,7 @@ let level = 1;
 let playerAttack = 3;
 let enemyAttack = 3;
 let enemyTurn = false;
+let fightTrainer = false;
 
 gridL2[1] = 2; //player init
 gridL5[6] = 3;
@@ -299,49 +301,97 @@ function BattleStart(Trainer){
 function BattleAction(Action){
     if(Action==0){//fight
         enemyHealth -= playerAttack;
-        if(enemyHealth <= 0){
-            BattleEnd(1);
-            return;
-        }        
+        document.getElementById("enemyHealth").innerHTML = "Enemy: " + enemyHealth + "HP";
+            
     }
     if(Action==1){//heal   
         playerHealth += 8;
         if(playerHealth>fullHealth){
             playerHealth = fullHealth;
         }        
+        document.getElementById("playerHealth").innerHTML = "Player: " + playerHealth + "HP";
     }
-    setTimeout(//set enemy turn and wait
-        function(){
-            playerHealth -= enemyAttack
-            if(playerHealth<=0){
-                BattleEnd(0);
+    if(enemyHealth <= 0){
+        document.getElementById("enemyHealth").innerHTML = "Enemy: " + "0" + "HP";
+        setTimeout(
+            function(){
+                BattleEnd(1);
+                return;
             }
-            else{
-                document.getElementById("playerHealth").innerHTML = "&nbsp";
-            }
-        }        
+        ,1000);            
+    }    
+    else{ 
+        setTimeout(//set enemy turn and wait
+            function(){
+                playerHealth -= enemyAttack
+                if(playerHealth<=0){
+                    BattleEnd(0);
+                }
+                else{
+                    document.getElementById("playerHealth").innerHTML = "Player: " + playerHealth + "HP";
+                }
+            }        
         ,1000);
+    }
 }
 
 function BattleEnd(Action){
-    if(Action==0){
-        playerHealth = fullHealth;
+    if(Action==0){ //loss
+        document.getElementById("playerHealth").innerHTML = "Player: " + "0" + "HP";
+        document.getElementById("text-box").innerHTML = "Defeat...";
+        if(fightTrainer==true){
+            fightTrainer=false;
+        }
+        setTimeout(
+            function(){
+                playerHealth = fullHealth;
+                document.getElementById("enemyHealth").innerHTML = "&nbsp";
+                document.getElementById("playerHealth").innerHTML = "&nbsp";
+                document.getElementById("text-box").innerHTML = "&nbsp";
+                gridL2 = [1,0,0,0,0,0,0,1];
+                gridL3 = [1,0,0,0,0,0,0,1];
+                gridL4 = [1,0,0,0,0,0,0,1];
+                gridL5 = [1,0,0,0,0,0,0,1];
+                gridL6 = [1,0,0,0,0,0,0,1];
+                gridL7 = [1,0,0,0,0,0,0,1];
+                gridL2[1] = 2;
+                gridL5[6] = 3;
+                document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
+                playerPos = [1,1];
+                movementState = true;
+            }
+        ,1000)        
     }
     if(Action==1){//win
         experience += 50;        
+        document.getElementById("text-box").innerHTML = "Victory!";
+        if(fightTrainer == true){
+            document.getElementById("text-box").innerHTML = "TRAINER DEFEATED!";
+        }
         if(experience==100){
             LevelUp();
         }
         else{
             document.getElementById("experience").innerHTML = "EXP: " + experience;
         }
+        setTimeout(
+            function(){
+                document.getElementById("enemyHealth").innerHTML = "&nbsp";
+                document.getElementById("playerHealth").innerHTML = "&nbsp";
+                if(fightTrainer==false){
+                    document.getElementById("text-box").innerHTML = "&nbsp";
+                };               
+            }            
+        ,1000);
     }
-    document.getElementById("enemyHealth").innerHTML = "&nbsp";
-    document.getElementById("playerHealth").innerHTML = "&nbsp";
-    movementState = true;
-    battleState = false;
-    encounterSteps = Math.floor(Math.random()*5) + 1;
-    console.log(encounterSteps);
+    if(fightTrainer==false){
+        movementState = true;
+        battleState = false;
+        encounterSteps = Math.floor(Math.random()*5) + 1;
+        console.log(encounterSteps);
+        enemyHealth = 5;
+        enemyAttack = 3;
+    }   
 }
 
 function LevelUp(){
@@ -353,12 +403,27 @@ function LevelUp(){
 
     document.getElementById("level").innerHTML = "LEVEL: " + level;
     document.getElementById("experience").innerHTML = "EXP: " + experience;
+    document.getElementById("playerHealth").innerHTML = "Player: " + playerHealth + "HP";
+    document.getElementById("text-box").innerHTML += "Level UP!";
+    setTimeout(
+        function(){
+            document.getElementById("text-box").innerHTML = "&nbsp";
+        }
+    ,1000)
 }
 
 function FightTrainer(){
     if(nearTrainer==true){
         console.log("fighting");       
         BattleStart(1);
+        fightTrainer = true;
+        document.getElementById("text-box").innerHTML = "Fight Me!";
+        movementState = false;
+        setTimeout(
+            function(){
+                document.getElementById("text-box").innerHTML = "&nbsp";
+            }
+        ,1000)
     }
 }
 function Reset(){

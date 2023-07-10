@@ -37,3 +37,12 @@ TO DO:
 Set enemy turn on and off.
 Continue working on battle functions.
 Add fightTrainer on and off variable with battleend fighting trainer allowing for Victory on win.
+
+10 Jul:
+Switching between battle and movement states via switching movementState on and off.
+The battling system works, with pauses for victory and levelling up text.
+FightTrainer state allows for selection of final trainer enemy when in front of trainer, and defeating trainer enables victory conditions with "trainer defeated" text.
+
+TO DO:
+Add fade/in out state for conversion to div graphics.
+Begin converting to div graphics.
