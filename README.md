@@ -46,3 +46,4 @@ FightTrainer state allows for selection of final trainer enemy when in front of 
 TO DO:
 Add fade/in out state for conversion to div graphics.
 Begin converting to div graphics.
+Convert music to on/off button with movement state shifting starting music.
