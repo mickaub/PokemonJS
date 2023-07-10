@@ -42,8 +42,10 @@ Add fightTrainer on and off variable with battleend fighting trainer allowing fo
 Switching between battle and movement states via switching movementState on and off.
 The battling system works, with pauses for victory and levelling up text.
 FightTrainer state allows for selection of final trainer enemy when in front of trainer, and defeating trainer enables victory conditions with "trainer defeated" text.
+Working on fadein/out CSS.
+Added fadein/out on click.
 
 TO DO:
-Add fade/in out state for conversion to div graphics.
+Arrange the seperate DIV squares to occupy the same space and transition when required.
 Begin converting to div graphics.
 Convert music to on/off button with movement state shifting starting music.

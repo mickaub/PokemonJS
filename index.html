@@ -24,6 +24,54 @@ Win condition: Fight trainer and win.
 <meta name="viewport" content="width=device-width,initial-scale=1.0" />
 </head>
 <style>
+@keyframes fading{
+    0%{opacity: 0%;}
+    50%{opacity: 100%;}
+    100%{opacity: 0%;}
+}
+.square{
+    height: 256px;
+    width: 256px;
+   /* background-color: green;*/
+}
+.fader{
+    background-color:black;
+    opacity: 50%;
+}
+.fader.change{
+   animation: fading 3s 1;
+}
+.terrain{
+    background-color: green;
+}
+.combat{
+    background-color: antiquewhite;
+}
+#M-Layer {
+    top:0;
+    left:0;
+    z-index: 1;
+    position:relative;
+}
+/*#T-Layer {
+    top:0;
+    left:0;
+    z-index: 2;
+    position:relative;
+    margin-top: -100px;
+}*/
+#B-Layer {
+    top:0;
+    left:0;
+    position:relative;
+    z-index: 3;
+    margin-top: -50px;
+}
+#screen-container {
+    height:768px;
+    width: 256px;
+    display: grid;
+}
 </style>
 <body>
 <h2>PokemonJS Game</h2>
@@ -54,6 +102,12 @@ Win condition: Fight trainer and win.
     <div id="level">LEVEL: 1</div>
 </div>
 <div id="text-box"></div>
+<div id="screen-container">
+    <div id="M-Layer" class="square terrain"></div>
+    <div id="B-Layer" class="square combat"></div>
+    <div id="T-Layer" class="square fader"></div>
+</div>
+<button id="tester" onclick="Test()">Tester</button>
 <!--<audio controls> 
 <source src="battleV3.mp3" type="audio/mp3">
 Audio not supported.
@@ -93,6 +147,20 @@ console.log(encounterSteps);
 
 document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
 document.getElementById("startButton").innerHTML = "<button onclick=\"Start()\">Start</button>";
+
+function Test(){
+    document.getElementById("T-Layer").animate( //web animations API
+        [ //keyframe properties
+            {opacity: "0%"},
+            {opacity: "100%"},
+            {opacity: "0%"},
+        ],
+        { //timing properties
+            duration: 3000,
+            iterations: 1,
+        },
+    );
+}
 
 function Play(state,source){    
     let audio;
