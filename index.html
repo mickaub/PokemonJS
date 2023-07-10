@@ -36,7 +36,7 @@ Win condition: Fight trainer and win.
 }
 .fader{
     background-color:black;
-    opacity: 50%;
+    opacity: 0%;
 }
 .fader.change{
    animation: fading 3s 1;
@@ -48,29 +48,38 @@ Win condition: Fight trainer and win.
     background-color: antiquewhite;
 }
 #M-Layer {
-    top:0;
-    left:0;
+    width: 256px;
+    height: 256px;
     z-index: 1;
-    position:relative;
+    position:absolute;
+    display: flex;
+    flex-wrap: wrap;
 }
-/*#T-Layer {
-    top:0;
-    left:0;
-    z-index: 2;
-    position:relative;
-    margin-top: -100px;
-}*/
+#T-Layer {
+    width: 256px;
+    height: 256px;
+    z-index: 5;
+    position:absolute;
+    /*margin-top: -100px;*/
+}
 #B-Layer {
-    top:0;
-    left:0;
-    position:relative;
+    width: 256px;
+    height: 256px;
+    position:absolute;
     z-index: 3;
-    margin-top: -50px;
+    opacity: 0%;
+    /*margin-top: -50px;*/
 }
 #screen-container {
-    height:768px;
+    height: 256px;
     width: 256px;
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
+}
+.tile{
+    height: 32px;
+    width: 32px;
+   /* background-color: white;*/
 }
 </style>
 <body>
@@ -122,6 +131,7 @@ let gridL5 = [1,0,0,0,0,0,0,1]
 let gridL6 = [1,0,0,0,0,0,0,1]
 let gridL7 = [1,0,0,0,0,0,0,1]
 let gridL8 = [1,1,1,1,1,1,1,1];
+let gridSum = gridL1.concat(gridL2,gridL3,gridL4,gridL5,gridL6,gridL7,gridL8);
 let startState = false;
 let movementState = false;
 let battleState = false;
@@ -138,9 +148,28 @@ let playerAttack = 3;
 let enemyAttack = 3;
 let enemyTurn = false;
 let fightTrainer = false;
+console.log(gridSum.length,gridSum[11]);
 
 gridL2[1] = 2; //player init
 gridL5[6] = 3;
+
+let mapTiles = document.getElementById("M-Layer");
+for(let i=0;i<64;i++){
+    let tile = document.createElement('div');
+    tile.classList.add("tile");
+    tile.id = "T"  + i;
+    if(gridSum[i]==1){
+        tile.style.backgroundColor = "green";
+    }
+    else{
+        tile.style.backgroundColor = "brown";
+    }
+    tile.style.backgroundColor
+    mapTiles.append(tile);
+}
+document.getElementById("T9").style.backgroundColor = "black";
+let playerID = 9;
+document.getElementById("T38").style.backgroundColor = "black";
 
 encounterSteps = Math.floor(Math.random()*5) + 1;
 console.log(encounterSteps);
@@ -228,6 +257,9 @@ function Move(direction){
             gridL7[lr]=2;               
         }           
         playerPos[0] += 1;
+        document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        playerID += 8;
+        document.getElementById(`T${playerID}`).style.backgroundColor = "black";
     }
     if(direction==8){
         if(ud==1){
@@ -259,6 +291,9 @@ function Move(direction){
             gridL7[lr]=0;               
         }          
         playerPos[0] -= 1;
+        document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        playerID -= 8;
+        document.getElementById(`T${playerID}`).style.backgroundColor = "black";
     }
     if(direction==1){
         let newlr = lr + 1;
@@ -295,6 +330,9 @@ function Move(direction){
             gridL7[newlr]=2;         
         }              
         playerPos[1] += 1;
+        document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        playerID += 1;
+        document.getElementById(`T${playerID}`).style.backgroundColor = "black";
     }
     if(direction==-1){
         let newlr = lr - 1;
@@ -326,6 +364,9 @@ function Move(direction){
             gridL7[newlr]=2;         
         }              
         playerPos[1] -= 1;
+        document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        playerID -= 1;
+        document.getElementById(`T${playerID}`).style.backgroundColor = "black";
     }
     document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
     console.log(playerPos);
@@ -426,6 +467,9 @@ function BattleEnd(Action){
                 gridL5[6] = 3;
                 document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
                 playerPos = [1,1];
+                document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+                playerID = 9;
+                document.getElementById(`T${playerID}`).style.backgroundColor = "black";
                 movementState = true;
             }
         ,1000)        

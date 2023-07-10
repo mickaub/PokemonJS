@@ -45,7 +45,15 @@ FightTrainer state allows for selection of final trainer enemy when in front of 
 Working on fadein/out CSS.
 Added fadein/out on click.
 
+Combined all DIV squares into 1.
+Began converting to DIV graphics.
+Player and Trainer are on the board as Divs, and player div moves correctly.
+
 TO DO:
-Arrange the seperate DIV squares to occupy the same space and transition when required.
-Begin converting to div graphics.
+Work on switching battle background on and off when needed.
+Add battle options to battle background.
+Limit healings to 3.
+Show healing quantity.
 Convert music to on/off button with movement state shifting starting music.
+Revert to Start Button at start.
+Have extra layer in front to hide game before pressing start.
