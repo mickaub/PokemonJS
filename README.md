@@ -57,3 +57,20 @@ Show healing quantity.
 Convert music to on/off button with movement state shifting starting music.
 Revert to Start Button at start.
 Have extra layer in front to hide game before pressing start.
+
+11 Jul:
+Added transition to battle start and battle end.
+Battle background changes z-index when needed, with correct transition delay.
+Transition now cooperates with the fight and heal buttons.
+Heals are limited to 3, when heals are reduced to 0 no more heals allowed.
+Heal quantity is shown, with message when quantity is 0 and heal is attempted.
+
+Background changed to be trees.
+Trainer and enemy trainer changed to emoji faces instead of black sqaures.
+
+TO DO: 
+Have Fight Trainer button only appear when near to trainer, and hide when not near.
+Convert music to on/off button with movement state shifting starting music.
+Revert to Start Button at start.
+Have extra layer in front to hide game before pressing start.
+Clean up page and finish.

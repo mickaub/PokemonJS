@@ -5,17 +5,7 @@ walking grid creation, Start state/button, audio states, movement state, trigger
 battlemenu state, taketurn state,
 victory/defeat conditions, fadein/out state, final battle/win conditions.
 
-CS50 sections
-Start State, FadeIn state, dialogue state, playState, gird aligned movment, dialogue revisited,level,
-triggering encounters, Panel/Textbox, Selection, Menu, Party and Pokemon, battlesprite, shaders,
-battlestate, battlemenu state, taketurn state
-
-Left: fadein state,
-taketurn state
-fadein/out state
-
 Win condition: Fight trainer and win.
-
 -->
 <html lang="en">
 <head>
@@ -50,7 +40,7 @@ Win condition: Fight trainer and win.
 #M-Layer {
     width: 256px;
     height: 256px;
-    z-index: 1;
+    z-index: 3;
     position:absolute;
     display: flex;
     flex-wrap: wrap;
@@ -58,7 +48,7 @@ Win condition: Fight trainer and win.
 #T-Layer {
     width: 256px;
     height: 256px;
-    z-index: 5;
+    z-index: 6;
     position:absolute;
     /*margin-top: -100px;*/
 }
@@ -66,9 +56,17 @@ Win condition: Fight trainer and win.
     width: 256px;
     height: 256px;
     position:absolute;
-    z-index: 3;
-    opacity: 0%;
+    z-index: 5; /*normally 5*/
+    opacity: 0%; /*normally 0*/
     /*margin-top: -50px;*/
+}
+#extra-Layer{
+    width: 256px;
+    height: 256px;
+    position:absolute;
+    z-index: 6;
+    opacity: 0%;
+    background-color: antiquewhite;
 }
 #screen-container {
     height: 256px;
@@ -79,7 +77,23 @@ Win condition: Fight trainer and win.
 .tile{
     height: 32px;
     width: 32px;
+    text-align: center;
    /* background-color: white;*/
+}
+.arrow{
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+}
+.arrow-Con{
+    width: 256px;  
+    background-color: aliceblue;
+}
+#arrowU,#arrowD{
+    margin-left: 108px;
+}
+#arrowL{
+    margin-left: 64px;
 }
 </style>
 <body>
@@ -93,11 +107,11 @@ Win condition: Fight trainer and win.
 <button id="playButton" onclick="Play(1,1)";>Play W</button>
 <button id="playButton" onclick="Play(2,1)";>Stop W</button>
 <div id="startButton"></div>
-<button id="leftDir" onclick="Move(-1)">Move L</button>
+<!--<button id="leftDir" onclick="Move(-1)">Move L</button>
 <button id="downDir" onclick="Move(-8)">Move D</button>
 <button id="upDir" onclick="Move(8)">Move U</button>
 <button id="rightDir" onclick="Move(1)">Move R</button>
-<button id="resetButton" onclick="Reset()">Reset</button>
+<button id="resetButton" onclick="Reset()">Reset</button>-->
 <br>
 <button id="fightTrainer" onclick="FightTrainer()">Fight Trainer</button>
 <br>
@@ -105,18 +119,29 @@ Win condition: Fight trainer and win.
     <div id="enemyHealth">&nbsp;</div>
     <div id="playerHealth">&nbsp;</div>
     <br>    
-    <button id="Fight" onclick="BattleAction(0)">Fight</button><!--tempFunction-->
-    <button id="Heal" onclick="BattleAction(1)">Heal</button><!--tempFunction-->
-    <div id="experience">EXP: 0</div>
-    <div id="level">LEVEL: 1</div>
+    <button id="Fight">Fight</button> 
+    <button id="Heal">Heal</button>    
 </div>
-<div id="text-box"></div>
 <div id="screen-container">
     <div id="M-Layer" class="square terrain"></div>
     <div id="B-Layer" class="square combat"></div>
     <div id="T-Layer" class="square fader"></div>
+    <div id="extra-Layer"></div>
 </div>
-<button id="tester" onclick="Test()">Tester</button>
+<!--<button id="tester" onclick="Test()">Tester</button>-->
+<div class="arrow-Con">
+    <button id="arrowU" class="arrow" onclick="Move(8)">&#8593</button>
+    <br>    
+    <button id="arrowL" class="arrow"  onclick="Move(-1)">&#8592</button>
+    <button class="arrow">&nbsp;</button>
+    <button id="arrowR" class="arrow" onclick="Move(1)">&#8594</button>
+    <br>
+    <button id="arrowD" class="arrow" onclick="Move(-8)">&#8595</button>
+</div>
+<div id="experience">EXP: 0</div>
+<div id="level">LEVEL: 1</div>
+<div id="healN">Heals:</div>
+<div id="text-box"></div>
 <!--<audio controls> 
 <source src="battleV3.mp3" type="audio/mp3">
 Audio not supported.
@@ -148,6 +173,7 @@ let playerAttack = 3;
 let enemyAttack = 3;
 let enemyTurn = false;
 let fightTrainer = false;
+let heals = 3;
 console.log(gridSum.length,gridSum[11]);
 
 gridL2[1] = 2; //player init
@@ -160,6 +186,7 @@ for(let i=0;i<64;i++){
     tile.id = "T"  + i;
     if(gridSum[i]==1){
         tile.style.backgroundColor = "green";
+        tile.innerHTML = "&#x1F332";
     }
     else{
         tile.style.backgroundColor = "brown";
@@ -167,9 +194,39 @@ for(let i=0;i<64;i++){
     tile.style.backgroundColor
     mapTiles.append(tile);
 }
-document.getElementById("T9").style.backgroundColor = "black";
+
+let battleTiles = document.getElementById("B-Layer");
+let fightButton = document.getElementById("Fight");
+let healButton = document.getElementById("Heal");
+let eHealthButton = document.getElementById("enemyHealth");
+let pHealthButton = document.getElementById("playerHealth");
+//fightButton.id = "Fight";
+//healButton.id = "Heal";
+fightButton.style.marginTop = "32px";
+eHealthButton.style.marginLeft = "128px";
+pHealthButton.style.marginTop = "100px";
+
+eHealthButton.style.height = "30px";
+pHealthButton.style.height = "30px";
+fightButton.style.width = "128px";
+healButton.style.width = "128px";
+fightButton.style.height = "64px";
+healButton.style.height = "64px";
+fightButton.onclick = function(){BattleAction(0);};
+healButton.onclick = function(){BattleAction(1);};
+battleTiles.append(eHealthButton);
+battleTiles.append(pHealthButton);
+battleTiles.append(fightButton);
+battleTiles.append(healButton);
+
+
+//document.getElementById("T9").style.backgroundColor = "black";
+document.getElementById("T9").innerHTML = "&#x1F642";
 let playerID = 9;
-document.getElementById("T38").style.backgroundColor = "black";
+//document.getElementById("T38").style.backgroundColor = "black";
+document.getElementById("T38").innerHTML = "&#x1F928";
+
+document.getElementById("healN").innerHTML = "Heals: 3";
 
 encounterSteps = Math.floor(Math.random()*5) + 1;
 console.log(encounterSteps);
@@ -189,6 +246,29 @@ function Test(){
             iterations: 1,
         },
     );
+    if(movementState==false){
+        //move battlemap to front        
+        setTimeout(
+            function(){
+                document.getElementById("B-Layer").style.opacity = "100%";
+            }            
+        ,1500);
+        setTimeout(
+            function(){
+               // document.getElementById("B-Layer").style.opacity = "100%";
+                document.getElementById("B-Layer").style.zIndex = "7";
+            }            
+        ,3000);       
+    }
+    else{
+        //move battlemap back
+        document.getElementById("B-Layer").style.zIndex = "5";
+        setTimeout(
+            function(){
+                document.getElementById("B-Layer").style.opacity = "0%";
+            }            
+        ,1500);
+    }
 }
 
 function Play(state,source){    
@@ -257,9 +337,11 @@ function Move(direction){
             gridL7[lr]=2;               
         }           
         playerPos[0] += 1;
-        document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        //document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        document.getElementById(`T${playerID}`).innerHTML = "";
         playerID += 8;
-        document.getElementById(`T${playerID}`).style.backgroundColor = "black";
+        //document.getElementById(`T${playerID}`).style.backgroundColor = "black";
+        document.getElementById(`T${playerID}`).innerHTML = "&#x1F642";
     }
     if(direction==8){
         if(ud==1){
@@ -291,9 +373,11 @@ function Move(direction){
             gridL7[lr]=0;               
         }          
         playerPos[0] -= 1;
-        document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        //document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        document.getElementById(`T${playerID}`).innerHTML = "";
         playerID -= 8;
-        document.getElementById(`T${playerID}`).style.backgroundColor = "black";
+        document.getElementById(`T${playerID}`).innerHTML = "&#x1F642";
+       // document.getElementById(`T${playerID}`).style.backgroundColor = "black";
     }
     if(direction==1){
         let newlr = lr + 1;
@@ -330,9 +414,11 @@ function Move(direction){
             gridL7[newlr]=2;         
         }              
         playerPos[1] += 1;
-        document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        //document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        document.getElementById(`T${playerID}`).innerHTML = "";
         playerID += 1;
-        document.getElementById(`T${playerID}`).style.backgroundColor = "black";
+        document.getElementById(`T${playerID}`).innerHTML = "&#x1F642";
+        //document.getElementById(`T${playerID}`).style.backgroundColor = "black";
     }
     if(direction==-1){
         let newlr = lr - 1;
@@ -364,9 +450,11 @@ function Move(direction){
             gridL7[newlr]=2;         
         }              
         playerPos[1] -= 1;
-        document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        //document.getElementById(`T${playerID}`).style.backgroundColor = "brown";
+        document.getElementById(`T${playerID}`).innerHTML = "";
         playerID -= 1;
-        document.getElementById(`T${playerID}`).style.backgroundColor = "black";
+        document.getElementById(`T${playerID}`).innerHTML = "&#x1F642";
+       // document.getElementById(`T${playerID}`).style.backgroundColor = "black";
     }
     document.getElementById("grid1").innerHTML = gridL1 + "<br>" + gridL2 + "<br>"+ gridL3 + "<br>"+ gridL4 + "<br>"+ gridL5 + "<br>"+ gridL6 + "<br>"+ gridL7 + "<br>"+ gridL8;
     console.log(playerPos);
@@ -405,20 +493,31 @@ function BattleStart(Trainer){
     }
     document.getElementById("enemyHealth").innerHTML = "Enemy: " + enemyHealth + "HP";
     document.getElementById("playerHealth").innerHTML = "Player: " + playerHealth + "HP";
+    Test();
 }
 
 function BattleAction(Action){
+    if(movementState==true){
+        return;
+    }
     if(Action==0){//fight
         enemyHealth -= playerAttack;
         document.getElementById("enemyHealth").innerHTML = "Enemy: " + enemyHealth + "HP";
             
     }
     if(Action==1){//heal   
-        playerHealth += 8;
-        if(playerHealth>fullHealth){
-            playerHealth = fullHealth;
+        if(heals==0){
+            document.getElementById("text-box").innerHTML = "No more heals...";
+        }
+        if(heals>0){
+            playerHealth += 8;
+            if(playerHealth>fullHealth){
+                playerHealth = fullHealth;
+            }        
+            document.getElementById("playerHealth").innerHTML = "Player: " + playerHealth + "HP";
+            heals -= 1;
+            document.getElementById("healN").innerHTML = `Heals: ${heals}`;
         }        
-        document.getElementById("playerHealth").innerHTML = "Player: " + playerHealth + "HP";
     }
     if(enemyHealth <= 0){
         document.getElementById("enemyHealth").innerHTML = "Enemy: " + "0" + "HP";
@@ -471,14 +570,17 @@ function BattleEnd(Action){
                 playerID = 9;
                 document.getElementById(`T${playerID}`).style.backgroundColor = "black";
                 movementState = true;
+                Test();
             }
         ,1000)        
     }
     if(Action==1){//win
         experience += 50;        
+        movementState = true;
         document.getElementById("text-box").innerHTML = "Victory!";
         if(fightTrainer == true){
             document.getElementById("text-box").innerHTML = "TRAINER DEFEATED!";
+            movementState = false;
         }
         if(experience==100){
             LevelUp();
@@ -486,18 +588,21 @@ function BattleEnd(Action){
         else{
             document.getElementById("experience").innerHTML = "EXP: " + experience;
         }
-        setTimeout(
-            function(){
-                document.getElementById("enemyHealth").innerHTML = "&nbsp";
-                document.getElementById("playerHealth").innerHTML = "&nbsp";
-                if(fightTrainer==false){
-                    document.getElementById("text-box").innerHTML = "&nbsp";
-                };               
-            }            
-        ,1000);
+        if(fightTrainer==false){
+            setTimeout(
+                function(){
+                    document.getElementById("enemyHealth").innerHTML = "&nbsp";
+                    document.getElementById("playerHealth").innerHTML = "&nbsp";
+                    if(fightTrainer==false){
+                        document.getElementById("text-box").innerHTML = "&nbsp";
+                    };               
+                    Test();
+                }            
+            ,1000);
+        }        
     }
     if(fightTrainer==false){
-        movementState = true;
+      //  movementState = true;
         battleState = false;
         encounterSteps = Math.floor(Math.random()*5) + 1;
         console.log(encounterSteps);
