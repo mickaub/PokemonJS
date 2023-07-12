@@ -74,3 +74,13 @@ Convert music to on/off button with movement state shifting starting music.
 Revert to Start Button at start.
 Have extra layer in front to hide game before pressing start.
 Clean up page and finish.
+
+12 Jul:
+Have fight button only appear when near to trainer.
+Changed defeat div change to player emoji position change.
+Reverted to Start Button at start.
+Have extra layer hiding the game before pressing start.
+Music is altered by both the movement state and by the push of either the play music or stop music buttons
+Finished cleaning up.
+
+COMPLETE.
